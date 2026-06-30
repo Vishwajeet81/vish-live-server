@@ -1,65 +1,183 @@
-# vish-live-server README
+# Vish Live Server
 
-This is the README for your extension "vish-live-server". After writing up a brief description, we recommend including the following sections.
+A lightweight **VS Code Live Server extension** built completely **from scratch using Node.js** without Express or any existing live server libraries.
 
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+This project was created to deeply understand how Live Server works internally—from serving files with the HTTP module to implementing WebSocket-based live reload and integrating everything into a VS Code extension.
 
 ---
 
-## Working with Markdown
+## ✨ Features
 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+- ⚡ Start a local development server with one click
+- 🔄 Live Reload using WebSockets
+- 🌐 Automatically opens your default browser
+- 📄 Injects the Live Reload client into HTML automatically
+- 🖱️ Right-click any HTML file → **Go Live**
+- 📌 Status Bar integration (Go Live / Stop Live)
+- 🛑 Stop server directly from VS Code
+- 📂 Serves the current workspace
+- 📁 Supports nested HTML files
+- 📺 Supports HTTP Range Requests (video/audio streaming)
+- 🔒 Prevents Directory Traversal attacks
+- 🎯 Built without Express
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
+---
 
-## For more information
+## 🚀 Demo
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+> Coming Soon
 
-**Enjoy!**
+GIFs and screenshots will be added soon.
+
+---
+
+## 📦 Installation
+
+Install the extension from the Visual Studio Code Marketplace.
+
+Or install manually:
+
+1. Download the `.vsix` package.
+2. Open VS Code.
+3. Open the Command Palette (`Ctrl + Shift + P`).
+4. Select **Extensions: Install from VSIX...**
+5. Choose the downloaded `.vsix` file.
+
+---
+
+## 🚀 Usage
+
+### Start the server
+
+- Click **Go Live** from the Status Bar
+
+OR
+
+- Right-click any HTML file in the Explorer
+- Select **Go Live**
+
+Your browser will automatically open.
+
+---
+
+### Stop the server
+
+Click **Stop Live** from the Status Bar.
+
+---
+
+## 🏗️ Built From Scratch
+
+Unlike many simple Live Server clones, this project implements the core functionality manually.
+
+### HTTP Server
+
+- Native Node.js HTTP module
+- Static file serving
+- MIME type detection
+- Stream-based file serving
+
+### Live Reload
+
+- WebSocket server
+- Automatic HTML injection
+- Browser reload on file changes
+- File watching using `fs.watch()`
+
+### Performance
+
+- Streams for large files
+- HTTP Range Requests
+- Efficient file serving
+
+### Security
+
+- Directory Traversal protection
+- Safe path resolution
+- Restricted file access to workspace
+
+### VS Code Extension
+
+- Status Bar integration
+- Explorer Context Menu
+- Automatic browser launch
+- Child Process management
+
+---
+
+## 📂 Project Structure
+
+```text
+.
+├── extension.js
+├── server.js
+├── live-reload.js
+├── package.json
+├── images/
+├── README.md
+└── LICENSE
+```
+
+---
+
+## 🛠️ Technologies Used
+
+- Node.js
+- VS Code Extension API
+- HTTP
+- WebSocket (`ws`)
+- JavaScript
+
+---
+
+## 📌 Current Features
+
+- [x] HTTP Server
+- [x] Static File Serving
+- [x] Live Reload
+- [x] WebSocket Integration
+- [x] HTML Injection
+- [x] Status Bar
+- [x] Explorer Context Menu
+- [x] Auto Browser Launch
+- [x] Stop Server
+- [x] Range Requests
+- [x] MIME Types
+- [x] Directory Traversal Protection
+
+---
+
+## 🚧 Roadmap
+
+- [ ] Auto Port Detection
+- [ ] Custom Port Settings
+- [ ] Custom Browser Support
+- [ ] Better Error Messages
+- [ ] Multiple Workspace Support
+- [ ] File Ignore Patterns
+- [ ] Marketplace Improvements
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome.
+
+If you find a bug or have an idea for a new feature, feel free to open an issue.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+**Vishwajeet Bera**
+
+GitHub:
+https://github.com/Vishwajeet81
+
+If you found this project useful, consider giving it a ⭐ on GitHub!

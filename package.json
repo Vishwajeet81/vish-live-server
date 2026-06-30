@@ -1,7 +1,7 @@
 {
   "name": "vish-live-server",
   "displayName": "Vish Live Server",
-  "description": "A lightweight Live Server extension for VS Code built from scratch with Node.js. Features live reload, automatic browser launch, Explorer context menu integration, and a status bar.",
+  "description": "A lightweight VS Code Live Server built from scratch using Node.js with WebSocket-based live reload, automatic browser launch, Explorer context menu support, and status bar integration.",
   "version": "0.1.0",
   "publisher": "Vishwajeet81",
   "license": "MIT",
@@ -10,17 +10,18 @@
     "vscode": "^1.125.0"
   },
   "categories": [
-    "Programming Languages",
     "Other"
   ],
   "keywords": [
     "live-server",
     "live reload",
-    "web",
+    "websocket",
     "html",
     "css",
     "javascript",
     "nodejs",
+    "vscode",
+    "web",
     "development"
   ],
   "activationEvents": [
@@ -62,7 +63,8 @@
     "test": "vscode-test"
   },
   "dependencies": {
-    "open": "^11.0.0"
+    "open": "^11.0.0",
+    "ws": "^8.21.0"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
