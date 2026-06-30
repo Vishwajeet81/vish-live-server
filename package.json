@@ -1,0 +1,79 @@
+{
+  "name": "vish-live-server",
+  "displayName": "Vish Live Server",
+  "description": "A lightweight Live Server extension for VS Code built from scratch with Node.js. Features live reload, automatic browser launch, Explorer context menu integration, and a status bar.",
+  "version": "0.1.0",
+  "publisher": "Vishwajeet81",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "live-server",
+    "live reload",
+    "web",
+    "html",
+    "css",
+    "javascript",
+    "nodejs",
+    "development"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vish-live-server.goLive",
+        "title": "Go Live"
+      },
+      {
+        "command": "vish-live-server.stop",
+        "title": "Stop Live Server"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "vish-live-server.goLive",
+          "when": "resourceExtname == '.html'",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vishwajeet81/vish-live-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vishwajeet81/vish-live-server/issues"
+  },
+  "homepage": "https://github.com/Vishwajeet81/vish-live-server#readme",
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "open": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
+    "@types/vscode": "^1.125.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "eslint": "^10.5.0"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  }
+}
