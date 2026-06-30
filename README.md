@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="images/demo.gif" alt="Vish Live Server Demo" width="900">
+</p>
+
 # Vish Live Server
 
 A lightweight **VS Code Live Server extension** built completely **from scratch using Node.js** without Express or any existing live server libraries.
