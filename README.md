@@ -27,13 +27,6 @@ This project was created to deeply understand how Live Server works internally�
 
 ---
 
-## 🚀 Demo
-
-> Coming Soon
-
-GIFs and screenshots will be added soon.
-
----
 
 ## 📦 Installation
 
