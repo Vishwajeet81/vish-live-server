@@ -2,7 +2,7 @@
   "name": "vish-live-server",
   "displayName": "Vish Live Server",
   "description": "A lightweight VS Code Live Server built from scratch using Node.js with WebSocket-based live reload, automatic browser launch, Explorer context menu support, and status bar integration.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "Vishwajeet81",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -37,6 +37,10 @@
       {
         "command": "vish-live-server.stop",
         "title": "Stop Live Server"
+      },
+      {
+        "command": "vish-live-server.preview",
+        "title": "Vish Preview Server"
       }
     ],
     "menus": {
@@ -44,11 +48,19 @@
         {
           "command": "vish-live-server.goLive",
           "when": "resourceExtname == '.html'"
+        },
+        {
+          "command": "vish-live-server.preview",
+          "when": "resourceExtname == '.html'"
         }
       ],
       "editor/context": [
         {
           "command": "vish-live-server.goLive",
+          "when": "resourceExtname == '.html'"
+        },
+        {
+          "command": "vish-live-server.preview",
           "when": "resourceExtname == '.html'"
         }
       ]

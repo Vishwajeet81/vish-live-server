@@ -11,11 +11,31 @@ let serverProcess = null;
 /**
  * @param {vscode.ExtensionContext} context
  */
+
+function startServer(serverPath, projectPath, statusBarItem) {
+  // Display a message box to the user
+  vscode.window.showInformationMessage("Starting Vish Live Server...");
+  serverProcess = spawn("node", [serverPath, projectPath]);
+  serverProcess.stdout.on("data", (data) => {
+    console.log(data.toString());
+  });
+
+  serverProcess.stderr.on("data", (data) => {
+    console.error(data.toString());
+  });
+  serverProcess.on("close", () => {
+    serverProcess = null;
+
+    statusBarItem.text = "$(broadcast) Go Live";
+    statusBarItem.command = "vish-live-server.goLive";
+
+    console.log("Server stopped");
+  });
+}
 function activate(context) {
   const serverPath = path.join(context.extensionPath, "server.js");
   const projectPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-  let relativePath = null;
-  let urlPath = null;
+
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
     100,
@@ -36,6 +56,8 @@ function activate(context) {
   const disposable = vscode.commands.registerCommand(
     "vish-live-server.goLive",
     async function (uri) {
+      let relativePath = null;
+      let urlPath = null;
       if (!uri) {
         const editor = vscode.window.activeTextEditor;
         console.log(editor);
@@ -50,7 +72,6 @@ function activate(context) {
         vscode.window.showErrorMessage("Select Html file only!");
         return;
       }
-      uri = vscode.window.activeTextEditor.document.uri;
       relativePath = path.relative(projectPath, uri.fsPath);
       urlPath = relativePath.replace(/\\/g, "/");
       console.log("URI:", uri);
@@ -63,33 +84,21 @@ function activate(context) {
       }
       // The code you place here will be executed every time your command is executed
 
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Starting Vish Live Server...");
-
       console.log(serverPath);
       console.log(projectPath);
-      serverProcess = spawn("node", [serverPath, projectPath]);
-      statusBarItem.text = "$(debug-stop) Stop Live";
-      statusBarItem.command = "vish-live-server.stop";
+      if (!serverProcess) {
+        startServer(serverPath, projectPath, statusBarItem);
+        statusBarItem.text = "$(debug-stop) Stop Live";
+        statusBarItem.command = "vish-live-server.stop";
 
-      setTimeout(async () => {
-        await open("http://localhost:5000/" + urlPath);
-      }, 500);
-      serverProcess.stdout.on("data", (data) => {
-        console.log(data.toString());
-      });
-
-      serverProcess.stderr.on("data", (data) => {
-        console.error(data.toString());
-      });
-      serverProcess.on("close", () => {
-        serverProcess = null;
-
-        statusBarItem.text = "$(broadcast) Go Live";
-        statusBarItem.command = "vish-live-server.goLive";
-
-        console.log("Server stopped");
-      });
+        setTimeout(async () => {
+          await open("http://localhost:5000/" + urlPath);
+        }, 500);
+      } else {
+        return vscode.window.showInformationMessage(
+          "Vish Live Server is already running.",
+        );
+      }
     },
   );
   const disposable2 = vscode.commands.registerCommand(
@@ -106,7 +115,64 @@ function activate(context) {
     },
   );
 
-  context.subscriptions.push(disposable, disposable2, statusBarItem);
+  const previewDisposable = vscode.commands.registerCommand(
+    "vish-live-server.preview",
+    function () {
+      if (!serverProcess) {
+        startServer(serverPath, projectPath, statusBarItem);
+      } else {
+        vscode.window.showInformationMessage(
+          "Vish Live Server is running already",
+        );
+      }
+      const panel = vscode.window.createWebviewPanel(
+        "preview",
+        "Vish Live Preview",
+        vscode.ViewColumn.Beside,
+        {
+          enableScripts: true,
+        },
+      );
+
+      panel.webview.html = `
+         <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background:white;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <iframe
+        src="http://localhost:5000">
+    </iframe>
+</body>
+</html>
+      `;
+    },
+  );
+
+  context.subscriptions.push(
+    disposable,
+    disposable2,
+    statusBarItem,
+    previewDisposable,
+  );
 }
 
 // This method is called when your extension is deactivated
