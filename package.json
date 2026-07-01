@@ -43,8 +43,7 @@
       "explorer/context": [
         {
           "command": "vish-live-server.goLive",
-          "when": "resourceExtname == '.html'",
-          "group": "navigation"
+          "when": "resourceExtname == '.html'"
         }
       ]
     }

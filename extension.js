@@ -36,6 +36,21 @@ function activate(context) {
   const disposable = vscode.commands.registerCommand(
     "vish-live-server.goLive",
     async function (uri) {
+      if (!uri) {
+        const editor = vscode.window.activeTextEditor;
+        console.log(editor);
+        if (!editor) {
+          vscode.window.showErrorMessage("No active files");
+          return;
+        }
+        uri = editor.document.uri;
+      }
+      console.log("Extension : ", path.extname(uri.fsPath));
+      if (path.extname(uri.fsPath) != ".html") {
+        vscode.window.showErrorMessage("Select Html file only!");
+        return;
+      }
+      uri = vscode.window.activeTextEditor.document.uri;
       relativePath = path.relative(projectPath, uri.fsPath);
       urlPath = relativePath.replace(/\\/g, "/");
       console.log("URI:", uri);
@@ -90,8 +105,7 @@ function activate(context) {
       statusBarItem.command = "vish-live-server.goLive";
     },
   );
-  console.log(context.extensionPath);
-  console.log(vscode.workspace.workspaceFolders);
+
   context.subscriptions.push(disposable, disposable2, statusBarItem);
 }
 
