@@ -25,8 +25,8 @@ const MIME_TYPES = {
   ".pdf": "application/pdf",
   ".mp4": "video/mp4",
 };
-let rootDirectory  = process.argv[2] || path.resolve("./public");
-fs.watch(rootDirectory , { recursive: true }, (eventType, filename) => {
+let rootDirectory = process.argv[2] || path.resolve("./public");
+fs.watch(rootDirectory, { recursive: true }, (eventType, filename) => {
   console.log(eventType, filename);
   Array.from(wss.clients).forEach((client) => {
     if (client.readyState === client.OPEN) {
@@ -44,22 +44,22 @@ const server = http.createServer(async (req, res) => {
       url.pathname === "/" ? "/index.html" : url.pathname,
     );
 
-    let resolvedPath = path.resolve(rootDirectory , "." + filePath);
+    let resolvedPath = path.resolve(rootDirectory, "." + filePath);
 
     const ext = path.extname(resolvedPath);
 
-    if (!resolvedPath.startsWith(rootDirectory  + path.sep)) {
+    if (!resolvedPath.startsWith(rootDirectory + path.sep)) {
       res.statusCode = 403;
 
       return res.end("Invalid Url");
     }
     // const fileData = await fs.readFile(resolvedPath);
     if (req.url === "/live-reload.js") {
-      console.log("HELLO WORLD");
+      
       const js = await fs.promises.readFile(
         path.join(__dirname, "live-reload.js"),
       );
-      console.log(js);
+ 
       res.writeHead(200, {
         "content-type": "application/javascript",
       });

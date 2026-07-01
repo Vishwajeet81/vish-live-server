@@ -1,128 +1,198 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 const path = require("path");
 const { spawn } = require("child_process");
 const open = require("open").default;
 let serverProcess = null;
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 
-function startServer(serverPath, projectPath, statusBarItem) {
-  // Display a message box to the user
-  vscode.window.showInformationMessage("Starting Vish Live Server...");
-  serverProcess = spawn("node", [serverPath, projectPath]);
-  serverProcess.stdout.on("data", (data) => {
-    console.log(data.toString());
-  });
+//Utility Custom Methods
+function setInitialStatusBarItems(alignment, text, command, priority) {
+  const statusBarItem = vscode.window.createStatusBarItem(alignment, priority);
+  statusBarItem.text = text;
+  statusBarItem.command = command;
+  statusBarItem.show();
+  return statusBarItem;
+}
 
-  serverProcess.stderr.on("data", (data) => {
-    console.error(data.toString());
-  });
-  serverProcess.on("close", () => {
-    serverProcess = null;
+function setStatusBarItems(statusBarItem, text, command) {
+  statusBarItem.text = text;
+  statusBarItem.command = command;
+}
 
-    statusBarItem.text = "$(broadcast) Go Live";
-    statusBarItem.command = "vish-live-server.goLive";
+function verifyHtmlFile(uri) {
+  if (path.extname(uri.fsPath) != ".html") {
+    return false;
+  }
+  return true;
+}
 
-    console.log("Server stopped");
+function isUriPassedByNode(uri) {
+  if (!uri) {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showErrorMessage("No active files");
+      return false;
+    }
+    return editor.document.uri;
+  }
+  return uri;
+}
+
+function makeFinalUrlPath(projectPath, uri) {
+  const relativePath = path.relative(projectPath, uri.fsPath);
+  return relativePath.replace(/\\/g, "/");
+}
+
+function isServerExists() {
+  if (!serverProcess) {
+    return false;
+  }
+  return true;
+}
+
+function startServer(serverPath, projectPath, statusBar) {
+  return new Promise((resolve, reject) => {
+    vscode.window.showInformationMessage("Starting Vish Live Server...");
+
+    serverProcess = spawn("node", [serverPath, projectPath]);
+    serverProcess.stdout.on("data", (data) => {
+      console.log(data.toString());
+      if (data.toString().includes("Server running")) {
+        resolve();
+      }
+    });
+
+    serverProcess.stderr.on("data", (data) => {
+      console.log("STDERR");
+      console.error(data.toString());
+      vscode.window.showErrorMessage(data.toString());
+    });
+
+    serverProcess.on("close", () => {
+      serverProcess = null;
+
+      setStatusBarItems(
+        statusBar,
+        "$(broadcast) Go Live",
+        "vish-live-server.goLive",
+      );
+
+      console.log("Server stopped");
+      reject("Server not running..");
+    });
   });
 }
+
+// Lifecycle of extension starts from here
 function activate(context) {
   const serverPath = path.join(context.extensionPath, "server.js");
   const projectPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
 
-  const statusBarItem = vscode.window.createStatusBarItem(
+  const statusBar = setInitialStatusBarItems(
     vscode.StatusBarAlignment.Right,
+    "$(broadcast) Go Live",
+    "vish-live-server.goLive",
     100,
   );
 
-  statusBarItem.text = "$(broadcast) Go Live";
-  statusBarItem.command = "vish-live-server.goLive";
-  statusBarItem.show();
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
   console.log(
     'Congratulations, your extension "vish-live-server" is now active!',
   );
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with  registerCommand
-  // The commandId parameter must match the command field in package.json
   const disposable = vscode.commands.registerCommand(
     "vish-live-server.goLive",
     async function (uri) {
-      let relativePath = null;
       let urlPath = null;
-      if (!uri) {
-        const editor = vscode.window.activeTextEditor;
-        console.log(editor);
-        if (!editor) {
-          vscode.window.showErrorMessage("No active files");
-          return;
-        }
-        uri = editor.document.uri;
+
+      if (isUriPassedByNode(uri)) {
+        uri = isUriPassedByNode(uri);
+      } else {
+        return;
       }
-      console.log("Extension : ", path.extname(uri.fsPath));
-      if (path.extname(uri.fsPath) != ".html") {
+
+      if (!verifyHtmlFile(uri)) {
         vscode.window.showErrorMessage("Select Html file only!");
         return;
       }
-      relativePath = path.relative(projectPath, uri.fsPath);
-      urlPath = relativePath.replace(/\\/g, "/");
-      console.log("URI:", uri);
-      if (serverProcess) {
+
+      urlPath = makeFinalUrlPath(projectPath, uri);
+
+      if (isServerExists()) {
         await open("http://localhost:5000/" + urlPath);
         vscode.window.showInformationMessage(
           "Vish Live Server is already running.",
         );
         return;
       }
-      // The code you place here will be executed every time your command is executed
 
       console.log(serverPath);
       console.log(projectPath);
-      if (!serverProcess) {
-        startServer(serverPath, projectPath, statusBarItem);
-        statusBarItem.text = "$(debug-stop) Stop Live";
-        statusBarItem.command = "vish-live-server.stop";
+      if (!isServerExists()) {
+        try {
+          await startServer(serverPath, projectPath, statusBar);
+          setStatusBarItems(
+            statusBar,
+            "$(debug-stop) Stop Live",
+            "vish-live-server.stop",
+          );
 
-        setTimeout(async () => {
           await open("http://localhost:5000/" + urlPath);
-        }, 500);
-      } else {
-        return vscode.window.showInformationMessage(
-          "Vish Live Server is already running.",
-        );
+        } catch (err) {
+          setStatusBarItems(
+            statusBar,
+            "$(broadcast) Go Live",
+            "vish-live-server.goLive",
+          );
+
+          console.log("ERROR HAI : ", err);
+          vscode.window.showErrorMessage(err);
+          return;
+        }
+
+        // }, 500);
       }
     },
   );
+
   const disposable2 = vscode.commands.registerCommand(
     "vish-live-server.stop",
     function () {
-      if (!serverProcess) {
+      if (!isServerExists()) {
         vscode.window.showInformationMessage("No Live Server is running.");
         return;
       }
 
       serverProcess.kill();
-      statusBarItem.text = "$(broadcast) Go Live";
-      statusBarItem.command = "vish-live-server.goLive";
+      setStatusBarItems(
+        statusBar,
+        "$(broadcast) Go Live",
+        "vish-live-server.goLive",
+      );
     },
   );
 
   const previewDisposable = vscode.commands.registerCommand(
     "vish-live-server.preview",
-    function () {
-      if (!serverProcess) {
-        startServer(serverPath, projectPath, statusBarItem);
+    async function () {
+      if (!isServerExists()) {
+        try {
+          await startServer(serverPath, projectPath, statusBar);
+        } catch (err) {
+          setStatusBarItems(
+            statusBar,
+            "$(broadcast) Go Live",
+            "vish-live-server.goLive",
+          );
+
+          vscode.window.showErrorMessage(err);
+          return;
+        }
       } else {
         vscode.window.showInformationMessage(
-          "Vish Live Server is running already",
+          "Live Server is already running. Opening in browser...",
         );
       }
       const panel = vscode.window.createWebviewPanel(
@@ -170,12 +240,11 @@ function activate(context) {
   context.subscriptions.push(
     disposable,
     disposable2,
-    statusBarItem,
+    statusBar,
     previewDisposable,
   );
 }
 
-// This method is called when your extension is deactivated
 function deactivate() {}
 
 module.exports = {
