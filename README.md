@@ -1,42 +1,56 @@
+# Vish Live Server
+
+...
+
+## 🎥 Demos
+
+### Go Live
+
 <p align="center">
-  <img src="images/demo.gif" alt="Vish Live Server Demo" width="900">
+  <img src="images/go-live-demo.gif.mp4" width="900">
 </p>
 
-# Vish Live Server
+### Live Preview
+
+<p align="center">
+  <img src="images/live-preview-demo.gif.mp4" width="900">
+</p>
+
 
 A lightweight **VS Code Live Server extension** built completely **from scratch using Node.js** without Express or any existing live server libraries.
 
-This project was created to deeply understand how Live Server works internally—from serving files with the HTTP module to implementing WebSocket-based live reload and integrating everything into a VS Code extension.
+This project was built to deeply understand how Live Server works internally—from creating an HTTP server and serving static files to implementing WebSocket-based Live Reload and integrating everything into a VS Code extension.
 
 ---
 
 ## ✨ Features
 
 - ⚡ Start a local development server with one click
+- 🌐 Open your project directly in your default browser
+- 👀 Live Preview inside VS Code
 - 🔄 Live Reload using WebSockets
-- 🌐 Automatically opens your default browser
-- 📄 Injects the Live Reload client into HTML automatically
+- 📄 Automatic HTML Live Reload script injection
 - 🖱️ Right-click any HTML file → **Go Live**
+- 👀 Right-click any HTML file → **Vish Live Preview**
 - 📌 Status Bar integration (Go Live / Stop Live)
-- 🛑 Stop server directly from VS Code
+- 🛑 Stop Live Server directly from VS Code
 - 📂 Serves the current workspace
 - 📁 Supports nested HTML files
-- 📺 Supports HTTP Range Requests (video/audio streaming)
+- 📺 HTTP Range Request support (video/audio streaming)
 - 🔒 Prevents Directory Traversal attacks
-- 🎯 Built without Express
+- 🚀 Built completely without Express
 
 ---
 
-
 ## 📦 Installation
 
-Install the extension from the Visual Studio Code Marketplace.
+Install the extension directly from the **Visual Studio Code Marketplace**.
 
 Or install manually:
 
-1. Download the `.vsix` package.
+1. Download the `.vsix` file.
 2. Open VS Code.
-3. Open the Command Palette (`Ctrl + Shift + P`).
+3. Press **Ctrl + Shift + P**.
 4. Select **Extensions: Install from VSIX...**
 5. Choose the downloaded `.vsix` file.
 
@@ -44,28 +58,43 @@ Or install manually:
 
 ## 🚀 Usage
 
-### Start the server
+### 🌐 Go Live (External Browser)
 
-- Click **Go Live** from the Status Bar
+You can launch your project directly in your default browser.
 
-OR
+**Method 1**
 
-- Right-click any HTML file in the Explorer
-- Select **Go Live**
+- Click **Go Live** from the Status Bar.
 
-Your browser will automatically open.
+**Method 2**
+
+- Right-click any HTML file.
+- Select **Go Live**.
+
+Your browser will automatically open using the built-in Live Server.
 
 ---
 
-### Stop the server
+### 👀 Live Preview (Inside VS Code)
 
-Click **Stop Live** from the Status Bar.
+Preview your website without leaving VS Code.
+
+- Right-click any HTML file.
+- Select **Vish Live Preview**.
+
+The page opens inside a VS Code WebView while using the same Live Server instance.
+
+---
+
+### 🛑 Stop Live Server
+
+Click **Stop Live** from the Status Bar to stop the running server.
 
 ---
 
 ## 🏗️ Built From Scratch
 
-Unlike many simple Live Server clones, this project implements the core functionality manually.
+Unlike many simple Live Server clones, this project implements every major component manually.
 
 ### HTTP Server
 
@@ -76,29 +105,31 @@ Unlike many simple Live Server clones, this project implements the core function
 
 ### Live Reload
 
-- WebSocket server
+- WebSocket Server
 - Automatic HTML injection
-- Browser reload on file changes
+- Browser auto reload
 - File watching using `fs.watch()`
 
 ### Performance
 
-- Streams for large files
+- Stream-based file serving
 - HTTP Range Requests
-- Efficient file serving
+- Efficient handling of large files
 
 ### Security
 
 - Directory Traversal protection
 - Safe path resolution
-- Restricted file access to workspace
+- Restricted access outside the workspace
 
 ### VS Code Extension
 
 - Status Bar integration
 - Explorer Context Menu
-- Automatic browser launch
+- Live Preview (WebView)
+- External Browser Launch
 - Child Process management
+- Server lifecycle management
 
 ---
 
@@ -111,7 +142,10 @@ Unlike many simple Live Server clones, this project implements the core function
 ├── live-reload.js
 ├── package.json
 ├── images/
+│   ├── demo.gif
+│   └── icon.png
 ├── README.md
+├── CHANGELOG.md
 └── LICENSE
 ```
 
@@ -120,27 +154,31 @@ Unlike many simple Live Server clones, this project implements the core function
 ## 🛠️ Technologies Used
 
 - Node.js
+- JavaScript
 - VS Code Extension API
 - HTTP
 - WebSocket (`ws`)
-- JavaScript
+- Child Process API
+- File System (`fs`)
 
 ---
 
 ## 📌 Current Features
 
-- [x] HTTP Server
-- [x] Static File Serving
-- [x] Live Reload
-- [x] WebSocket Integration
-- [x] HTML Injection
-- [x] Status Bar
-- [x] Explorer Context Menu
-- [x] Auto Browser Launch
-- [x] Stop Server
-- [x] Range Requests
-- [x] MIME Types
-- [x] Directory Traversal Protection
+- ✅ HTTP Server
+- ✅ Static File Serving
+- ✅ Live Reload
+- ✅ Live Preview (VS Code WebView)
+- ✅ External Browser Launch
+- ✅ WebSocket Integration
+- ✅ Automatic HTML Injection
+- ✅ Status Bar Integration
+- ✅ Explorer Context Menu
+- ✅ Stop Live Server
+- ✅ HTTP Range Requests
+- ✅ MIME Type Detection
+- ✅ Directory Traversal Protection
+- ✅ Child Process Management
 
 ---
 
@@ -148,25 +186,28 @@ Unlike many simple Live Server clones, this project implements the core function
 
 - [ ] Auto Port Detection
 - [ ] Custom Port Settings
+- [ ] Live Preview Address Bar
+- [ ] Preview Navigation Controls
 - [ ] Custom Browser Support
-- [ ] Better Error Messages
+- [ ] Better Error Handling
 - [ ] Multiple Workspace Support
 - [ ] File Ignore Patterns
+- [ ] Extension Settings
 - [ ] Marketplace Improvements
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome.
+Contributions, issues, and feature requests are welcome.
 
-If you find a bug or have an idea for a new feature, feel free to open an issue.
+Feel free to open an issue or submit a pull request if you'd like to improve the project.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
 
 ---
 
@@ -174,7 +215,7 @@ This project is licensed under the MIT License.
 
 **Vishwajeet Bera**
 
-GitHub:
+GitHub:  
 https://github.com/Vishwajeet81
 
 If you found this project useful, consider giving it a ⭐ on GitHub!
