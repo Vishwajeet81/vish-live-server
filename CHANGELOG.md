@@ -2,38 +2,44 @@
 
 All notable changes to the "vish-live-server" extension will be documented in this file.
 
+---
+
+
+## [0.2.3] - 2026-07-02
+
+### Changed
+- Updated the CHANGELOG.md documentation.
+
+---
 
 ## [0.2.2] - 2026-07-02
 
 ### Added
-- Added Live Preview inside VS Code using WebView.
 - Added automatic port detection when the default port is already in use.
-- Added shared server support for Browser and Live Preview.
 
 ### Changed
 - Replaced timeout-based startup with Promise-based server startup synchronization.
-- Refactored the extension into reusable utility functions.
 - Improved server lifecycle management.
 - Improved status bar updates during server start and stop.
-- Updated the README with feature documentation and demo sections.
+- Updated the README with new documentation and demo GIFs.
 
 ### Improved
 - Improved startup reliability.
 - Improved server startup error handling.
-- Better handling when the Live Server is already running.
-- Cleaner startup flow by waiting until the server is fully ready before opening the browser or Live Preview.
+- Improved handling when the Live Server is already running.
+- Added automatic recovery by selecting the next available port when the default port is occupied.
 
 ### Fixed
 - Fixed race conditions during server startup.
-- Fixed issues caused by occupied default ports by automatically selecting the next available port.
+- Fixed startup failures caused by occupied default ports.
 
 ---
 
 ## [0.2.1] - 2026-07-02
 
 ### Changed
-- Updated documentation.
-- Added proper demo GIFs to the README.
+- Updated project documentation.
+- Added demo GIFs to the README.
 
 ---
 
@@ -41,13 +47,13 @@ All notable changes to the "vish-live-server" extension will be documented in th
 
 ### Added
 - Added Live Preview inside VS Code using WebView.
-- Added shared server support for Browser and Preview.
+- Added shared server support for Browser and Live Preview.
 
 ### Changed
 - Replaced timeout-based startup with Promise-based server startup synchronization.
-- Refactored extension code into reusable utility functions.
+- Refactored the extension into reusable utility functions.
 - Improved status bar updates and server lifecycle handling.
 
-### Fixed
+### Improved
 - Improved startup reliability.
 - Better handling when the Live Server is already running.
