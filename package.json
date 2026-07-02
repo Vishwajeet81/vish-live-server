@@ -2,7 +2,7 @@
   "name": "vish-live-server",
   "displayName": "Vish Live Server",
   "description": "A lightweight VS Code Live Server built from scratch using Node.js with WebSocket-based live reload, automatic browser launch, Explorer context menu support, and status bar integration.",
-  "version": "0.2.",
+  "version": "0.2.1",
   "publisher": "Vishwajeet81",
   "license": "MIT",
   "icon": "images/icon.png",
