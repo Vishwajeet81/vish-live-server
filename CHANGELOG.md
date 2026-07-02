@@ -2,6 +2,14 @@
 
 All notable changes to the "vish-live-server" extension will be documented in this file.
 
+## [0.2.1] - 2026-07-02
+
+### Changed
+- Updated documentation.
+- Added proper demo GIFs to the README.
+
+---
+
 ## [0.2.0] - 2026-07-01
 
 ### Added

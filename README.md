@@ -7,13 +7,13 @@
 ### Go Live
 
 <p align="center">
-  <img src="images/go-live-demo.gif.mp4" width="900">
+  <img src="images/go-live-demo.gif" width="900">
 </p>
 
 ### Live Preview
 
 <p align="center">
-  <img src="images/live-preview-demo.gif.mp4" width="900">
+  <img src="images/live-preview-demo.gif" width="900">
 </p>
 
 
