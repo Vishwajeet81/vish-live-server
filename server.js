@@ -6,7 +6,9 @@ const path = require("path");
 const crypt = require("crypto");
 const { WebSocketServer } = require("ws");
 const PORT = 5000;
-
+const MAX_PORT = 5100;
+let wss;
+let watcher;
 const MIME_TYPES = {
   ".html": "text/html",
   ".css": "text/css",
@@ -26,16 +28,8 @@ const MIME_TYPES = {
   ".mp4": "video/mp4",
 };
 let rootDirectory = process.argv[2] || path.resolve("./public");
-fs.watch(rootDirectory, { recursive: true }, (eventType, filename) => {
-  console.log(eventType, filename);
-  Array.from(wss.clients).forEach((client) => {
-    if (client.readyState === client.OPEN) {
-      client.send("reload");
-    }
-  });
-});
 
-const server = http.createServer(async (req, res) => {
+async function handler(req, res) {
   try {
     const requestUrl = req.url.replace(/^\/+/, "/");
     const url = new URL(requestUrl, `http://${req.headers.host}`);
@@ -55,11 +49,10 @@ const server = http.createServer(async (req, res) => {
     }
     // const fileData = await fs.readFile(resolvedPath);
     if (req.url === "/live-reload.js") {
-      
       const js = await fs.promises.readFile(
         path.join(__dirname, "live-reload.js"),
       );
- 
+
       res.writeHead(200, {
         "content-type": "application/javascript",
       });
@@ -149,19 +142,52 @@ const server = http.createServer(async (req, res) => {
       return res.end(`<p>${err.message}</p>`);
     }
   }
-});
+}
 
-const wss = new WebSocketServer({
-  server,
-});
-
-wss.on("connection", (socket, request) => {
-  console.log("Client connected");
-
-  socket.on("close", () => {
-    console.log("Client Disconnected");
+function startServer(port) {
+  if (port > MAX_PORT) {
+    console.error("No available ports found.");
+    return;
+  }
+  const server = http.createServer(handler);
+  server.on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      server.close();
+      startServer(port + 1);
+    } else {
+      throw err;
+    }
   });
-});
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  server.on("close", () => {
+    watcher?.close();
+    wss?.close();
+  });
+  server.listen(port, () => {
+    console.log(`PORT=${port}`);
+    wss = new WebSocketServer({
+      server,
+    });
+
+    wss.on("connection", (socket, request) => {
+      console.log("Client connected");
+
+      socket.on("close", () => {
+        console.log("Client Disconnected");
+      });
+    });
+
+    watcher = fs.watch(
+      rootDirectory,
+      { recursive: true },
+      (eventType, filename) => {
+        console.log(eventType, filename);
+        Array.from(wss.clients).forEach((client) => {
+          if (client.readyState === client.OPEN) {
+            client.send("reload");
+          }
+        });
+      },
+    );
+  });
+}
+startServer(PORT);

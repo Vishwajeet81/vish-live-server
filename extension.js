@@ -3,7 +3,7 @@ const path = require("path");
 const { spawn } = require("child_process");
 const open = require("open").default;
 let serverProcess = null;
-
+let PORT = null;
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -60,7 +60,10 @@ function startServer(serverPath, projectPath, statusBar) {
     serverProcess = spawn("node", [serverPath, projectPath]);
     serverProcess.stdout.on("data", (data) => {
       console.log(data.toString());
-      if (data.toString().includes("Server running")) {
+      if (data.toString().includes("PORT=")) {
+        console.log("true");
+        PORT = Number(data.toString().split("=").slice(1).toString());
+        console.log("PORT", PORT);
         resolve();
       }
     });
@@ -121,7 +124,8 @@ function activate(context) {
       urlPath = makeFinalUrlPath(projectPath, uri);
 
       if (isServerExists()) {
-        await open("http://localhost:5000/" + urlPath);
+        console.log(PORT);
+        await open(`http://localhost:${PORT}/` + urlPath);
         vscode.window.showInformationMessage(
           "Vish Live Server is already running.",
         );
@@ -139,7 +143,7 @@ function activate(context) {
             "vish-live-server.stop",
           );
 
-          await open("http://localhost:5000/" + urlPath);
+          await open(`http://localhost:${PORT}/` + urlPath);
         } catch (err) {
           setStatusBarItems(
             statusBar,
@@ -151,8 +155,6 @@ function activate(context) {
           vscode.window.showErrorMessage(err);
           return;
         }
-
-        // }, 500);
       }
     },
   );
@@ -229,7 +231,7 @@ function activate(context) {
 
 <body>
     <iframe
-        src="http://localhost:5000">
+        src="http://localhost:${PORT}">
     </iframe>
 </body>
 </html>
