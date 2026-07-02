@@ -4,6 +4,7 @@ const { spawn } = require("child_process");
 const open = require("open").default;
 let serverProcess = null;
 let PORT = null;
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -42,6 +43,8 @@ function isUriPassedByNode(uri) {
 }
 
 function makeFinalUrlPath(projectPath, uri) {
+  console.log(projectPath, uri);
+  console.log("i am in");
   const relativePath = path.relative(projectPath, uri.fsPath);
   return relativePath.replace(/\\/g, "/");
 }
@@ -93,7 +96,7 @@ function startServer(serverPath, projectPath, statusBar) {
 function activate(context) {
   const serverPath = path.join(context.extensionPath, "server.js");
   const projectPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-
+  let urlPath = null;
   const statusBar = setInitialStatusBarItems(
     vscode.StatusBarAlignment.Right,
     "$(broadcast) Go Live",
@@ -108,8 +111,6 @@ function activate(context) {
   const disposable = vscode.commands.registerCommand(
     "vish-live-server.goLive",
     async function (uri) {
-      let urlPath = null;
-
       if (isUriPassedByNode(uri)) {
         uri = isUriPassedByNode(uri);
       } else {
@@ -178,7 +179,12 @@ function activate(context) {
 
   const previewDisposable = vscode.commands.registerCommand(
     "vish-live-server.preview",
-    async function () {
+    async function (uri) {
+      console.log("Preview");
+      urlPath = makeFinalUrlPath(projectPath, uri);
+      console.log(uri);
+      console.log(projectPath);
+      console.log(urlPath);
       if (!isServerExists()) {
         try {
           await startServer(serverPath, projectPath, statusBar);
@@ -231,7 +237,7 @@ function activate(context) {
 
 <body>
     <iframe
-        src="http://localhost:${PORT}">
+        src="http://localhost:${PORT}/${urlPath}">
     </iframe>
 </body>
 </html>

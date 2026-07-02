@@ -28,7 +28,7 @@ This project was created to deeply understand how Live Server works internally�
 
 - ⚡ Start a local development server with one click
 - 🌐 Open your project directly in your default browser
-- 👀 Live Preview inside VS Code
+- 👀 Live Preview inside VS Code for any HTML file in the workspace
 - 🔄 Live Reload using WebSockets
 - 🔍 Automatic Port Detection when the default port is already in use
 - 📄 Automatic HTML Live Reload script injection
@@ -86,6 +86,7 @@ Preview your website without leaving VS Code.
 
 The page opens inside a VS Code WebView while using the same Live Server instance.
 
+Live Reload works inside the preview just like in the external browser.
 ---
 
 ## 🛑 Stop Live Server
